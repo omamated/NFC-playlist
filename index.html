@@ -1,31 +1,11 @@
-<script> 
-    function getStoredPlaylist() {
-        return localStorage.getItem("playlist") || null;
-    }
-
-    function convertToDeepLink(url) {
-        if (url.includes("open.spotify.com/playlist/")) {
-            let playlistId = url.split("/playlist/")[1].split("?")[0];
-            return "spotify://playlist/" + playlistId;
-        } 
-        if (url.includes("music.apple.com")) {
-            return "music://"; // Apple Music doesn't support direct playlist deep links
-        }
-        return url; // Default for YouTube Music or unsupported cases
-    }
-
-    function redirectToPlaylist() {
-        let playlist = getStoredPlaylist();
-        if (playlist) {
-            let deepLink = convertToDeepLink(playlist);
-            window.location.href = deepLink;
-        }
-    }
-
-    window.onload = function () {
-        let playlist = getStoredPlaylist();
-        if (playlist) {
-            redirectToPlaylist();
-        }
-    };
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+</head>
+<body>
+    <h1>Hello, NFC Playlist!</h1>
+</body>
+</html>
