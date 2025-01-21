@@ -3,9 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Page</title>
+    <title>NFC Playlist Setup</title>
 </head>
 <body>
-    <h1>Hello, NFC Playlist!</h1>
+    <h1>Set Up Your NFC Playlist</h1>
+    <p>Paste your playlist link below:</p>
+    
+    <input type="text" id="playlistUrl" placeholder="Enter your playlist link">
+    <button onclick="savePlaylist()">Save</button>
+    
+    <p id="status"></p>
+
+    <script>
+        function savePlaylist() {
+            let url = document.getElementById("playlistUrl").value;
+            if (url.trim() === "") {
+                document.getElementById("status").innerText = "⚠️ Please enter a valid URL!";
+                return;
+            }
+            
+            localStorage.setItem("playlist", url);
+            document.getElementById("status").innerText = "✅ Playlist saved! Tap your NFC tag.";
+        }
+
+        function redirectToPlaylist() {
+            let playlist = localStorage.getItem("playlist");
+            if (playlist) {
+                window.location.href = playlist;
+            }
+        }
+
+        // Auto-play if visiting via NFC
+        window.onload = function () {
+            redirectToPlaylist();
+        };
+    </script>
 </body>
 </html>
