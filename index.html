@@ -1,75 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Setup Your NFC Playlist</title>
-</head>
-<body>
-    <h2>🎵 Choose Your Music App</h2>
-    <select id="musicApp">
-        <option value="">Select an app</option>
-        <option value="spotify">Spotify</option>
-        <option value="applemusic">Apple Music</option>
-        <option value="ytmusic">YouTube Music</option>
-    </select>
-    
-    <h2>📌 How to Get Your Playlist Link</h2>
-    <p>Follow these steps to get your playlist link:</p>
-    <ul id="instructions">
-        <li>Select your music app above.</li>
-        <li>Click the button below to open the app.</li>
-        <li>Find the playlist you want.</li>
-        <li>Tap "Share" or "Copy Link."</li>
-        <li>Paste the link below.</li>
-    </ul>
+<script>
+    function getStoredPlaylist() {
+        return localStorage.getItem("playlist") || null;
+    }
 
-    <button id="openAppButton" onclick="openMusicApp()" disabled>Open Music App</button>
-
-    <h2>🔗 Enter Your Playlist Link</h2>
-    <input type="text" id="playlistLink" placeholder="Paste your playlist URL here">
-    <button onclick="savePreferences()">Save</button>
-
-    <script>
-        function openMusicApp() {
-            let app = document.getElementById("musicApp").value;
-            let links = {
-                spotify: "spotify://",
-                applemusic: "https://music.apple.com/",
-                ytmusic: "https://music.youtube.com/"
-            };
-
-            if (links[app]) {
-                window.open(links[app], "_blank");
-            }
+    function convertToDeepLink(url) {
+        if (url.includes("open.spotify.com/playlist/")) {
+            let playlistId = url.split("/playlist/")[1].split("?")[0];
+            return "spotify://playlist/" + playlistId;
+        } 
+        if (url.includes("music.apple.com")) {
+            return "music://"; // Apple Music doesn't support direct playlist deep links
         }
+        return url; // Default for YouTube Music or unsupported cases
+    }
 
-        document.getElementById("musicApp").addEventListener("change", function() {
-            document.getElementById("openAppButton").disabled = false;
-        });
-
-        function savePreferences() {
-            let playlist = document.getElementById("playlistLink").value;
-            if (!playlist) {
-                alert("Please enter a playlist link.");
-                return;
-            }
-            localStorage.setItem("playlist", playlist);
-            alert("Saved! Next scan will auto-play.");
+    function redirectToPlaylist() {
+        let playlist = getStoredPlaylist();
+        if (playlist) {
+            let deepLink = convertToDeepLink(playlist);
+            window.location.href = deepLink;
         }
+    }
 
-        function redirectToPlaylist() {
-            let playlist = localStorage.getItem("playlist");
-            if (playlist) {
-                window.location.href = playlist;
-            }
+    window.onload = function () {
+        let playlist = getStoredPlaylist();
+        if (playlist) {
+            redirectToPlaylist();
         }
-
-        window.onload = function () {
-            if (localStorage.getItem("playlist")) {
-                redirectToPlaylist();
-            }
-        };
-    </script>
-</body>
-</html>
+    };
+</script>
