@@ -12,13 +12,44 @@
     <button onclick="chooseApp('spotify')">Spotify</button>
     <button onclick="chooseApp('appleMusic')">Apple Music</button>
     <button onclick="chooseApp('youtubeMusic')">YouTube Music</button>
-    
+
     <h2>Step 2: Enter Your Playlist Link</h2>
     <input type="text" id="playlistUrl" placeholder="Enter your playlist link">
     <button onclick="savePlaylist()">Save Playlist</button>
     
     <p id="status"></p>
-    <p id="instructions">Tap your NFC tag to save your playlist. You can change it anytime.</p>
+
+    <h2>Step 3: How to Get Your Playlist Link</h2>
+    <div id="instructions">
+        <h3>1. Spotify:</h3>
+        <ol>
+            <li>Open the Spotify app or website.</li>
+            <li>Go to the playlist you want to share.</li>
+            <li>Click on the three dots (options menu) on the playlist.</li>
+            <li>Select "Share" → "Copy Playlist Link".</li>
+            <li>Paste the link in the input box above.</li>
+        </ol>
+        
+        <h3>2. Apple Music:</h3>
+        <ol>
+            <li>Open the Apple Music app or website.</li>
+            <li>Find the playlist you want to share.</li>
+            <li>Click the three dots (options menu) and select "Share Playlist".</li>
+            <li>Click "Copy Link" to copy the playlist URL.</li>
+            <li>Paste the link in the input box above.</li>
+        </ol>
+
+        <h3>3. YouTube Music:</h3>
+        <ol>
+            <li>Open the YouTube Music app or website.</li>
+            <li>Go to the playlist you want to share.</li>
+            <li>Click the three dots (options menu) and select "Share".</li>
+            <li>Select "Copy Link".</li>
+            <li>Paste the link in the input box above.</li>
+        </ol>
+    </div>
+    
+    <p id="instructionsText">Tap your NFC tag to save your playlist. You can change it anytime.</p>
 
     <script>
         let selectedApp = '';
@@ -61,29 +92,4 @@
                 if (app === "spotify") {
                     deepLink = "spotify://playlist/" + extractSpotifyId(url);
                 } else if (app === "appleMusic") {
-                    deepLink = "music://"; // Simplified, Apple Music doesn't support direct deep links
-                } else if (app === "youtubeMusic") {
-                    deepLink = "https://music.youtube.com/playlist?list=" + extractYouTubeId(url);
-                }
-
-                window.location.href = deepLink;
-            }
-        }
-
-        function extractSpotifyId(url) {
-            let id = url.split("/playlist/")[1].split("?")[0];
-            return id;
-        }
-
-        function extractYouTubeId(url) {
-            let id = url.split("list=")[1];
-            return id;
-        }
-
-        // Auto-play if visiting via NFC
-        window.onload = function () {
-            redirectToPlaylist();
-        };
-    </script>
-</body>
-</html>
+                    deepLink = "music://"; // Simplified, Apple Music doesn't support direct deep li
