@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Set Up Your NFC Playlist</h1>
-    
+
     <h2>Step 1: Choose Your Music App</h2>
     <button onclick="chooseApp('spotify')">Spotify</button>
     <button onclick="chooseApp('appleMusic')">Apple Music</button>
@@ -21,34 +21,17 @@
 
     <h2>Step 3: How to Get Your Playlist Link</h2>
     <div id="instructions">
-        <h3>1. Spotify:</h3>
+        <h3>How to Get Your Playlist Link:</h3>
         <ol>
-            <li>Open the Spotify app or website by clicking the button above.</li>
-            <li>Go to the playlist you want to share.</li>
-            <li>Click on the three dots (options menu) on the playlist.</li>
-            <li>Select "Share" → "Copy Playlist Link".</li>
-            <li>Paste the link in the input box above.</li>
-        </ol>
-        
-        <h3>2. Apple Music:</h3>
-        <ol>
-            <li>Open the Apple Music app or website by clicking the button above.</li>
-            <li>Find the playlist you want to share.</li>
-            <li>Click the three dots (options menu) and select "Share Playlist".</li>
-            <li>Click "Copy Link" to copy the playlist URL.</li>
-            <li>Paste the link in the input box above.</li>
-        </ol>
-
-        <h3>3. YouTube Music:</h3>
-        <ol>
-            <li>Open the YouTube Music app or website by clicking the button above.</li>
-            <li>Go to the playlist you want to share.</li>
-            <li>Click the three dots (options menu) and select "Share".</li>
-            <li>Select "Copy Link".</li>
-            <li>Paste the link in the input box above.</li>
+            <li><strong>Spotify:</strong> Open Spotify by clicking the button above, go to your playlist, and click on the three dots. Choose "Share" > "Copy Playlist Link". Paste it here.</li>
+            <li><strong>Apple Music:</strong> Open Apple Music by clicking the button above,, go to your playlist, tap the three dots, and select "Share Playlist". Copy the link and paste it here.</li>
+            <li><strong>YouTube Music:</strong> Open YouTube Music V, go to your playlist, click on the three dots, and choose "Share" > "Copy Playlist Link". Paste it here.</li>
         </ol>
     </div>
-    
+
+    <!-- This button will be hidden until the playlist is saved and the app is opened -->
+    <button id="changePlaylistButton" style="display: none;" onclick="window.location.href='https://your-website-link.com'">Change Playlist</button>
+
     <p id="instructionsText">Tap your NFC tag to save your playlist. You can change it anytime.</p>
 
     <script>
@@ -78,6 +61,9 @@
 
             localStorage.setItem("playlist", JSON.stringify(playlistLink));
             document.getElementById("status").innerText = "✅ Playlist saved! Tap your NFC tag to launch your app.";
+
+            // Show "Change Playlist" button after playlist is saved
+            document.getElementById("changePlaylistButton").style.display = "inline";
         }
 
         function redirectToPlaylist() {
@@ -92,4 +78,33 @@
                 if (app === "spotify") {
                     deepLink = "spotify://playlist/" + extractSpotifyId(url);
                 } else if (app === "appleMusic") {
-                    deepLink = "music://"; // Simplified, Apple Music doesn't support direct deep li
+                    deepLink = "music://"; // Simplified, Apple Music doesn't support direct deep links
+                } else if (app === "youtubeMusic") {
+                    deepLink = "https://music.youtube.com/playlist?list=" + extractYouTubeId(url);
+                }
+
+                // Open the playlist in the app
+                window.location.href = deepLink;
+
+                // Show "Change Playlist" button after the app is launched
+                document.getElementById("changePlaylistButton").style.display = "inline";
+            }
+        }
+
+        function extractSpotifyId(url) {
+            let id = url.split("/playlist/")[1].split("?")[0];
+            return id;
+        }
+
+        function extractYouTubeId(url) {
+            let id = url.split("list=")[1];
+            return id;
+        }
+
+        // Auto-play if visiting via NFC
+        window.onload = function () {
+            redirectToPlaylist();
+        };
+    </script>
+</body>
+</html>
