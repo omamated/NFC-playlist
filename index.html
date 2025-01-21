@@ -7,30 +7,77 @@
 </head>
 <body>
     <h1>Set Up Your NFC Playlist</h1>
-    <p>Paste your playlist link below:</p>
     
+    <h2>Step 1: Choose Your Music App</h2>
+    <button onclick="chooseApp('spotify')">Spotify</button>
+    <button onclick="chooseApp('appleMusic')">Apple Music</button>
+    <button onclick="chooseApp('youtubeMusic')">YouTube Music</button>
+    
+    <h2>Step 2: Enter Your Playlist Link</h2>
     <input type="text" id="playlistUrl" placeholder="Enter your playlist link">
-    <button onclick="savePlaylist()">Save</button>
+    <button onclick="savePlaylist()">Save Playlist</button>
     
     <p id="status"></p>
+    <p id="instructions">Tap your NFC tag to save your playlist. You can change it anytime.</p>
 
     <script>
+        let selectedApp = '';
+
+        function chooseApp(app) {
+            selectedApp = app;
+            alert('You selected ' + app + '. Now enter your playlist link.');
+        }
+
         function savePlaylist() {
             let url = document.getElementById("playlistUrl").value;
             if (url.trim() === "") {
                 document.getElementById("status").innerText = "⚠️ Please enter a valid URL!";
                 return;
             }
-            
-            localStorage.setItem("playlist", url);
-            document.getElementById("status").innerText = "✅ Playlist saved! Tap your NFC tag.";
+
+            if (selectedApp === '') {
+                document.getElementById("status").innerText = "⚠️ Please select a music app first!";
+                return;
+            }
+
+            let playlistLink = {
+                app: selectedApp,
+                url: url
+            };
+
+            localStorage.setItem("playlist", JSON.stringify(playlistLink));
+            document.getElementById("status").innerText = "✅ Playlist saved! Tap your NFC tag to launch your app.";
         }
 
         function redirectToPlaylist() {
-            let playlist = localStorage.getItem("playlist");
-            if (playlist) {
-                window.location.href = playlist;
+            let playlistData = localStorage.getItem("playlist");
+            if (playlistData) {
+                let data = JSON.parse(playlistData);
+                let app = data.app;
+                let url = data.url;
+                let deepLink = "";
+
+                // Convert to deep link based on app
+                if (app === "spotify") {
+                    deepLink = "spotify://playlist/" + extractSpotifyId(url);
+                } else if (app === "appleMusic") {
+                    deepLink = "music://"; // Simplified, Apple Music doesn't support direct deep links
+                } else if (app === "youtubeMusic") {
+                    deepLink = "https://music.youtube.com/playlist?list=" + extractYouTubeId(url);
+                }
+
+                window.location.href = deepLink;
             }
+        }
+
+        function extractSpotifyId(url) {
+            let id = url.split("/playlist/")[1].split("?")[0];
+            return id;
+        }
+
+        function extractYouTubeId(url) {
+            let id = url.split("list=")[1];
+            return id;
         }
 
         // Auto-play if visiting via NFC
