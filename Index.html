@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Your NFC Playlist</title>
+</head>
+<body>
+    <h2>Choose Your Music App</h2>
+    <select id="musicApp" onchange="updateLink()">
+        <option value="">Select an app</option>
+        <option value="spotify">Spotify</option>
+        <option value="applemusic">Apple Music</option>
+        <option value="ytmusic">YouTube Music</option>
+    </select>
+    
+    <h2>Get Your Playlist Link</h2>
+    <p>Tap below to open your music app and copy your playlist link:</p>
+    <a id="openAppLink" href="#" target="_blank">
+        <button id="openAppButton" disabled>Open Music App</button>
+    </a>
+    
+    <h2>Enter Your Playlist Link</h2>
+    <input type="text" id="playlistLink" placeholder="Paste your playlist URL here">
+    <button onclick="savePreferences()">Save</button>
+
+    <script>
+        function updateLink() {
+            let app = document.getElementById("musicApp").value;
+            let link = "";
+            
+            if (app === "spotify") {
+                link = "spotify://";
+            } else if (app === "applemusic") {
+                link = "https://music.apple.com/";
+            } else if (app === "ytmusic") {
+                link = "https://music.youtube.com/";
+            }
+
+            if (link) {
+                document.getElementById("openAppLink").href = link;
+                document.getElementById("openAppButton").disabled = false;
+            } else {
+                document.getElementById("openAppButton").disabled = true;
+            }
+        }
+
+        function savePreferences() {
+            let app = document.getElementById("musicApp").value;
+            let playlist = document.getElementById("playlistLink").value;
+
+            if (!app || !playlist) {
+                alert("Please select an app and enter a playlist link.");
+                return;
+            }
+
+            localStorage.setItem("musicApp", app);
+            localStorage.setItem("playlist", playlist);
+
+            alert("Saved! Next scan will auto-play.");
+        }
+
+        function redirectToPlaylist() {
+            let playlist = localStorage.getItem("playlist");
+
+            if (playlist) {
+                window.location.href = playlist;
+            }
+        }
+
+        // Auto-play if returning user
+        window.onload = function () {
+            if (localStorage.getItem("playlist")) {
+                redirectToPlaylist();
+            }
+        };
+    </script>
+</body>
+</html>
