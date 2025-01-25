@@ -30,8 +30,9 @@
             </ol>
         </div>
 
-        <!-- Change Playlist Button -->
-        <button id="changePlaylistButton" style="display: none;" onclick="clearPlaylist()">Change Playlist</button>
+        <!-- Change Playlist Button (Always Visible) -->
+        <button id="changePlaylistButton" onclick="clearPlaylist()">Change Playlist</button>
+        <p>If you would like to change your playlist, just come to the website and close any redirects. Then hit the button above and enter a new playlist.</p>
     </div>
 
     <script>
@@ -61,9 +62,6 @@
 
             localStorage.setItem("playlist", JSON.stringify(playlistLink));
             document.getElementById("status").innerText = "✅ Playlist saved! Tap your NFC tag to auto-open your app.";
-
-            // Show Change Playlist Button
-            document.getElementById("changePlaylistButton").style.display = "inline";
         }
 
         function redirectToPlaylist() {
