@@ -6,33 +6,33 @@
     <title>NFC Playlist Setup</title>
 </head>
 <body>
-    <h1>Set Up Your NFC Playlist</h1>
+    <div id="setupPage">
+        <h1>Set Up Your NFC Playlist</h1>
 
-    <h2>Step 1: Choose Your Music App</h2>
-    <button onclick="chooseApp('spotify')">Spotify</button>
-    <button onclick="chooseApp('appleMusic')">Apple Music</button>
-    <button onclick="chooseApp('youtubeMusic')">YouTube Music</button>
+        <h2>Step 1: Choose Your Music App</h2>
+        <button onclick="chooseApp('spotify')">Spotify</button>
+        <button onclick="chooseApp('appleMusic')">Apple Music</button>
+        <button onclick="chooseApp('youtubeMusic')">YouTube Music</button>
 
-    <h2>Step 2: Enter Your Playlist Link</h2>
-    <input type="text" id="playlistUrl" placeholder="Enter your playlist link">
-    <button onclick="savePlaylist()">Save Playlist</button>
-    
-    <p id="status"></p>
+        <h2>Step 2: Enter Your Playlist Link</h2>
+        <input type="text" id="playlistUrl" placeholder="Enter your playlist link">
+        <button onclick="savePlaylist()">Save Playlist</button>
 
-    <h2>Step 3: How to Get Your Playlist Link</h2>
-    <div id="instructions">
-        <h3>How to Get Your Playlist Link:</h3>
-        <ol>
-            <li><strong>Spotify:</strong> Open Spotify, go to your playlist, and click on the three dots. Choose "Share" > "Copy Playlist Link". Paste it here.</li>
-            <li><strong>Apple Music:</strong> Open Apple Music, go to your playlist, tap the three dots, and select "Share Playlist". Copy the link and paste it here.</li>
-            <li><strong>YouTube Music:</strong> Open YouTube Music, go to your playlist, click on the three dots, and choose "Share" > "Copy Playlist Link". Paste it here.</li>
-        </ol>
+        <p id="status"></p>
+
+        <h2>Step 3: How to Get Your Playlist Link</h2>
+        <div id="instructions">
+            <h3>How to Get Your Playlist Link:</h3>
+            <ol>
+                <li><strong>Spotify:</strong> Open Spotify, go to your playlist, and click on the three dots. Choose "Share" > "Copy Playlist Link". Paste it here.</li>
+                <li><strong>Apple Music:</strong> Open Apple Music, go to your playlist, tap the three dots, and select "Share Playlist". Copy the link and paste it here.</li>
+                <li><strong>YouTube Music:</strong> Open YouTube Music, go to your playlist, click on the three dots, and choose "Share" > "Copy Playlist Link". Paste it here.</li>
+            </ol>
+        </div>
+
+        <!-- Change Playlist Button -->
+        <button id="changePlaylistButton" style="display: none;" onclick="clearPlaylist()">Change Playlist</button>
     </div>
-
-    <!-- This button will be hidden until the playlist is saved and the app is opened -->
-    <button id="changePlaylistButton" style="display: none;" onclick="window.location.href='https://omamated.github.io/NFC-playlist/index.html'">Change Playlist</button>
-
-    <p id="instructionsText">Tap your NFC tag to save your playlist. You can change it anytime by hitting cancel when the asks you to open the app and hit the button above!</p>
 
     <script>
         let selectedApp = '';
@@ -60,9 +60,9 @@
             };
 
             localStorage.setItem("playlist", JSON.stringify(playlistLink));
-            document.getElementById("status").innerText = "✅ Playlist saved! Tap your NFC tag to launch your app.";
+            document.getElementById("status").innerText = "✅ Playlist saved! Tap your NFC tag to auto-open your app.";
 
-            // Show "Change Playlist" button after playlist is saved
+            // Show Change Playlist Button
             document.getElementById("changePlaylistButton").style.display = "inline";
         }
 
@@ -78,16 +78,13 @@
                 if (app === "spotify") {
                     deepLink = "spotify://playlist/" + extractSpotifyId(url);
                 } else if (app === "appleMusic") {
-                    deepLink = "music://"; // Simplified, Apple Music doesn't support direct deep links
+                    deepLink = "music://"; // Apple Music doesn't support direct deep links
                 } else if (app === "youtubeMusic") {
                     deepLink = "https://music.youtube.com/playlist?list=" + extractYouTubeId(url);
                 }
 
-                // Open the playlist in the app
+                // Auto-redirect to the playlist
                 window.location.href = deepLink;
-
-                // Show "Change Playlist" button after the app is launched
-                document.getElementById("changePlaylistButton").style.display = "inline";
             }
         }
 
@@ -101,9 +98,21 @@
             return id;
         }
 
-        // Auto-play if visiting via NFC
+        function clearPlaylist() {
+            localStorage.removeItem("playlist");
+            location.reload();
+        }
+
+        // Auto-play if visiting via NFC tap
         window.onload = function () {
-            redirectToPlaylist();
+            let playlistData = localStorage.getItem("playlist");
+            if (playlistData) {
+                // Hide the setup page
+                document.getElementById("setupPage").style.display = "none";
+
+                // Auto-open the music app
+                redirectToPlaylist();
+            }
         };
     </script>
 </body>
