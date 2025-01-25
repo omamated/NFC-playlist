@@ -33,6 +33,9 @@
         <!-- Change Playlist Button (Always Visible) -->
         <button id="changePlaylistButton" onclick="clearPlaylist()">Change Playlist</button>
         <p>If you would like to change your playlist, just come to the website and close any redirects. Then hit the button above and enter a new playlist.</p>
+
+        <!-- Fallback Button to Manually Open Playlist (only shows if auto-open fails) -->
+        <button id="openPlaylistButton" style="display: none;" onclick="redirectToPlaylist()">Open Playlist</button>
     </div>
 
     <script>
@@ -81,8 +84,10 @@
                     deepLink = "https://music.youtube.com/playlist?list=" + extractYouTubeId(url);
                 }
 
-                // Auto-redirect to the playlist
-                window.location.href = deepLink;
+                // Attempt auto-open
+                setTimeout(() => {
+                    window.location.href = deepLink;
+                }, 500);
             }
         }
 
@@ -108,8 +113,16 @@
                 // Hide the setup page
                 document.getElementById("setupPage").style.display = "none";
 
-                // Auto-open the music app
-                redirectToPlaylist();
+                // Try to auto-open the music app
+                setTimeout(() => {
+                    redirectToPlaylist();
+
+                    // If auto-open fails, show a manual "Open Playlist" button
+                    setTimeout(() => {
+                        document.getElementById("openPlaylistButton").style.display = "block";
+                        document.getElementById("setupPage").style.display = "block";
+                    }, 2000);
+                }, 500);
             }
         };
     </script>
